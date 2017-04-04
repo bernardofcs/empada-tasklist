@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
-import './App.css';
+// import './App.css';
+import Auth0Lock from 'auth0-lock'
+import TaskDashboard from './TaskDashboard.jsx'
+import Alert from 'react-s-alert';
+import 'react-s-alert/dist/s-alert-default.css';
+import 'react-s-alert/dist/s-alert-css-effects/genie.css';
 
 class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      allTasks: []
+      allTasks: [],
+      clickedStartButton : [],
+      clickedEndButton : [],
+      progress_bar: []
    }
   }
   
@@ -60,20 +68,209 @@ class App extends Component {
     localStorage.removeItem("profile")
     // this.showLock()
   }
+
+  handleLogin = () => {
+    const loginObj = {type: 'auth0-login', email:this.state.profile.email, first_name: this.state.profile.given_name, last_name: this.state.profile.family_name}
+    this.socket.send(JSON.stringify(loginObj))
+  }
+
+  checkStartTime = () => {
+    const { allTasks = [] } = this.state;
+    const startTime = allTasks.filter((task) => task.start_time !== null);
+    startTime.forEach((e) => {
+      this.setState({ clickedStartButton: [...this.state.clickedStartButton, e.id] });
+    })
+  }
+
+  checkEndTime = () => {
+    const { allTasks = [] } = this.state;
+    const endTime = allTasks.filter((task) => task.end_time !== null);
+    endTime.forEach((e) => {
+      this.setState({ clickedEndButton: [...this.state.clickedEndButton, e.id] });
+    })
+  }
+
+
+  componentDidMount(){
+    setTimeout(() => {
+      if (!localStorage.profile) {
+        // this.showLock();
+      } else {
+        const storageProfile = JSON.parse(localStorage.profile)
+        this.setState({profile: storageProfile})
+      }
+    }, 800)
+
+    this.socket = new WebSocket("ws://localhost:3001");
+    this.socket.onopen = () => {
+      console.log('Connected to server!');
+      this.socket.send(JSON.stringify({type: 'request-tasks-and-users'})) 
+      setTimeout(() => {
+        this.socket.send(JSON.stringify({email: this.state.profile.email, type: 'askingForUserTasks'}))                                          
+      }, 1200)
+      
+    }
+    this.socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      switch(data.type){
+        case "start-time-button-clicked":
+          this.checkStartTime();
+          this.setState({ clickedStartButton: [...this.state.clickedStartButton, +data.id] });
+          break;
+
+        case "end-time-button-clicked":
+          this.checkEndTime();
+          this.setState({ clickedEndButton: [...this.state.clickedEndButton, +data.id] });
+          break;
+
+        case "task-list-for-user":
+          this.setState({allTasks: data.tasks})
+          this.checkStartTime();
+          this.checkEndTime(); 
+          break;
+        case "update-progress-bar":
+          break;
+        case "progress-bar-update":
+             let task = data.tasks.filter((t) => {
+              return t.id;
+          });
+
+          let user = data.users.filter((u) => {
+            return u.id;
+          });
+
+          let progress_bar = {};
+
+          task.forEach((t) => {
+            let key = t.userId + '/' + t.projectId;
+            if (progress_bar[key] && progress_bar[t.projectId])  {
+              progress_bar[key].total_tasks += 1;
+            } else {
+              progress_bar[key] = {};
+              progress_bar[key].total_tasks = 1;
+              progress_bar[key].userId = t.userId;
+              progress_bar[key].projectId = t.projectId;
+              user.forEach((u) => {
+                if (t.userId === u.id) {
+                  progress_bar[key].name = u.first_name;
+                }
+              })
+
+              if (progress_bar[key].incomplete_tasks === undefined) {
+                progress_bar[key].incomplete_tasks = 100;
+                progress_bar[key].completed_tasks = 0;
+              } else {
+                progress_bar[key].incomplete_tasks = this.state[t.userId].incomplete_tasks;
+                progress_bar[key].completed_tasks = this.state[t.userId].completed_tasks;
+              }
+            }
+          })
+
+          // just gets the values the progress_bar map
+          const pBar = Object.keys(progress_bar).map(key => progress_bar[key]);
+
+
+          let newProgressBarState = {
+            progress_bar: pBar
+          }
+
+          this.setState(newProgressBarState);
+          break;
+        case "allTasks":
+          break;
+        default:
+          console.log(data)
+          console.error('Failed to send back');
+      }
+    }
+  }
+
+  
+  
+  
+
+  handleStartTask = (e) => {
+    e.preventDefault();
+
+    console.log('task id', e.target.value)
+
+    let message = {
+      type: 'start-time-for-contractor-tasks',
+      start_time: new Date(),
+      id: +e.target.value,
+      progress_bar: this.state.progress_bar,
+      disabledStartButton: this.state.disabledStartButton
+    }
+    console.log('start task button pressed');
+    this.socket.send(JSON.stringify(message));
+  }
+
+  updateCompletedAndIncompleteTasks = ({ target: { value } }) => {
+    const targetId = +value;
+    const { progress_bar = [], allTasks = [], clickedStartButton = [] } = this.state;
+
+      const targetTask = allTasks.find((task) => task.id === targetId);
+      const targetUserId = targetTask.userId
+      const buttonClicked = clickedStartButton.find((id) => id === targetId);
+
+
+      if (buttonClicked !== targetId) {
+        console.error("You must begin a task before you can end it!");
+        Alert.error("You must begin a task before you can end it!");
+      } else {
+
+      const userProgress = progress_bar
+        .filter((v) => v)
+        .find(({ userId }) => userId === targetUserId)
+        // .find(({ projectId }) => projectId === targetUserId);
+
+      if (progress_bar.find(({ userId }) => userId === +targetUserId)) {
+
+        const progIdx = progress_bar.indexOf(userProgress);
+
+        const taskStart = allTasks.find(({ userId }) => userId === targetUserId);
+
+        const percentOfTasksToChange = 100 / userProgress.total_tasks;
+
+        const newProgressBar = progress_bar.slice();
+        newProgressBar[progIdx] = {
+          ...userProgress,
+          completed_tasks: Math.min(100, userProgress.completed_tasks + percentOfTasksToChange),
+          incomplete_tasks: Math.max(0, userProgress.incomplete_tasks - percentOfTasksToChange),
+        };
+
+        this.socket.send(JSON.stringify({
+          type: 'end-time-for-contractor-tasks-and-updating-progress-bar',
+          progress_bar: newProgressBar,
+          end_time: new Date(),
+          id: targetId, 
+          disabledEndButton: this.state.disabledEndButton
+        }));
+      }
+    }
+  }
+
   render() {
     return (
       <div className="App">
         <div className="App-header">
           <h2>Welcome to EMPADA</h2>
         </div>
+        <div className="login-box">
+          <button onClick={this.showLock}>Sign In</button>
+          <button onClick={this.logout}>Log out</button>
+          {this.state.profile && <p>Logged in as: {this.state.profile.email}</p>}
+        </div>
+        {this.state.profile &&
         <TaskDashboard
+            userEmail={this.state.profile.email}
             handleStartTask={this.handleStartTask}
             listOfTasks={this.state.allTasks}
             updateCompletedAndIncompleteTasks={this.updateCompletedAndIncompleteTasks}
             clickedStart={this.state.clickedStartButton}
             clickedEnd={this.state.clickedEndButton}
-            selectedProject={this.state.selectedProject}
           />
+        }
       </div>
     );
   }

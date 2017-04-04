@@ -15,16 +15,16 @@ class TaskDashboard extends Component {
           <thead>
             <tr>
               <th data-field="Start Task">Start Task</th>
-              <th data-field="Scheduled Start Time">Start Time</th>
+              <th data-field="Scheduled Start Time">Assigned Start</th>
               <th data-field="Description">Description</th>
-              <th data-field="Scheduled End Time">End Time</th>
+              <th data-field="Scheduled End Time">Assigned End</th>
               <th data-field="End Task">End Task</th>
             </tr>
           </thead>
 
           <tbody>
             {
-              this.props.listOfTasks.filter(({ projectId }) => projectId === this.props.selectedProject.id)
+              this.props.listOfTasks
               .map((task) => {
                 return <TaskDashboardFields
                   task={task}

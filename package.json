@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "auth0-lock": "^10.14.0",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "react-materialize": "^0.18.1",
+    "react-s-alert": "^1.2.2"
   },
   "devDependencies": {
     "react-scripts": "0.9.5"
