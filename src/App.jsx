@@ -90,7 +90,6 @@ class App extends Component {
     })
   }
 
-
   componentDidMount(){
     setTimeout(() => {
       if (!localStorage.profile) {
@@ -143,7 +142,7 @@ class App extends Component {
 
           task.forEach((t) => {
             let key = t.userId + '/' + t.projectId;
-            if (progress_bar[key] && progress_bar[t.projectId])  {
+            if (progress_bar[key])  {
               progress_bar[key].total_tasks += 1;
             } else {
               progress_bar[key] = {};
@@ -169,7 +168,6 @@ class App extends Component {
           // just gets the values the progress_bar map
           const pBar = Object.keys(progress_bar).map(key => progress_bar[key]);
 
-
           let newProgressBarState = {
             progress_bar: pBar
           }
@@ -184,10 +182,6 @@ class App extends Component {
       }
     }
   }
-
-  
-  
-  
 
   handleStartTask = (e) => {
     e.preventDefault();
@@ -205,14 +199,13 @@ class App extends Component {
     this.socket.send(JSON.stringify(message));
   }
 
-  updateCompletedAndIncompleteTasks = ({ target: { value } }) => {
+ updateCompletedAndIncompleteTasks = ({ target: { value } }) => {
     const targetId = +value;
     const { progress_bar = [], allTasks = [], clickedStartButton = [] } = this.state;
 
       const targetTask = allTasks.find((task) => task.id === targetId);
       const targetUserId = targetTask.userId
       const buttonClicked = clickedStartButton.find((id) => id === targetId);
-
 
       if (buttonClicked !== targetId) {
         console.error("You must begin a task before you can end it!");
@@ -238,7 +231,7 @@ class App extends Component {
           completed_tasks: Math.min(100, userProgress.completed_tasks + percentOfTasksToChange),
           incomplete_tasks: Math.max(0, userProgress.incomplete_tasks - percentOfTasksToChange),
         };
-
+        console.log('my new progress bar', newProgressBar)
         this.socket.send(JSON.stringify({
           type: 'end-time-for-contractor-tasks-and-updating-progress-bar',
           progress_bar: newProgressBar,
