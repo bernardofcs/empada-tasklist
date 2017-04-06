@@ -318,25 +318,27 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <h2>Welcome to EMPADA</h2>
-        </div>
-        <div className="login-box">
-          <button onClick={this.showLock}>Sign In</button>
-          <button onClick={this.logout}>Log out</button>
-          {this.state.profile && <p>Logged in as: {this.state.profile.email}</p>}
-        </div>
-        {this.state.profile &&
-        <TaskDashboard
-            userEmail={this.state.profile.email}
-            handleStartTask={this.handleStartTask}
-            listOfTasks={this.state.allTasks}
-            updateCompletedAndIncompleteTasks={this.updateCompletedAndIncompleteTasks}
-            clickedStart={this.state.clickedStartButton}
-            clickedEnd={this.state.clickedEndButton}
-          />
-        }
+      <div>
+        <nav className="nav-extended light-blue lighten-1">
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo left"><i className="large material-icons">av_timer</i>EMPADA</a>
+          </div>
+          {/*<div className="App">
+            <div className="App-header">
+              <h2>Welcome to EMPADA</h2>
+            </div>
+          </div>*/}
+        </nav>
+          {this.state.profile &&
+          <TaskDashboard
+              userEmail={this.state.profile.email}
+              handleStartTask={this.handleStartTask}
+              listOfTasks={this.state.allTasks}
+              updateCompletedAndIncompleteTasks={this.updateCompletedAndIncompleteTasks}
+              clickedStart={this.state.clickedStartButton}
+              clickedEnd={this.state.clickedEndButton}
+            />
+          }
       </div>
     );
   }

@@ -1,73 +1,240 @@
-.App {
-  text-align: center;
+/*.App {
+    text-align: center;
+}*/
+
+.brand-logo > i {
+  padding-left: 0.1em !important;
+  font-size: 45px !important;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.avatar {
+    border-radius: 25%;
+    width: 50px;
+    margin: .25em;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.row {
+    margin-bottom: 0;
 }
 
-.collapsible {
-  font-size: 0.7rem;
+.col {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
 }
 
-.collapsible-header p {
-  margin: 0;
-  padding: 1rem;
-  line-height: 1rem;
+.card-move-up.card {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
 }
 
-.collapsible-body {
-  padding: 1rem;
+.notifications {
+  /*font-size: 0.7rem;*/
+  padding: 0.1rem;
 }
 
-.timeline {
-  /*width: 50%;*/
-  /*width: 1000px;*/
-  /*margin: auto;*/
-  /*overflow: auto;*/
+.card-panel {
+    margin-top: 0;
 }
 
-.progress-donut-container {
-  border: 1px solid lightblue;
-  margin: auto;
-  height: 7.9em;
-  transition: 300ms;
+.newsfeed.card-panel {
+  height: 76vh !important;
+  padding: 0;
+  margin-right: 0;
+  margin-left: 0;
+  overflow: scroll;
+}
+
+.dashboardTimeline.card-panel {
+    padding: 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.card-title {
+    padding: 0 0.5em !important;
+    font-size: 1.6rem;
+    font-weight: 300;
+}
+
+.badge {
+    height: 1em;
+}
+
+.tiny.material-icons {
+    padding-top: 0.15rem;
+}
+
+.card-content {
+    margin: 0;
+    padding: 1rem !important;
+    line-height: 1rem;
+}
+
+.notification {
+    /*margin-bottom: 0.1em;*/
+    margin: 0.30em;
+}
+
+.card-reveal {
+    font-size: 0.7rem;
+    padding: 0.5rem !important;
+}
+
+dl {
+    margin: 0;
 }
 
 .dashboardTimeline {
-  /*width: 50%;*/
-  /*width: 1000px;*/
+    /*width: 50%;*/
+    /*width: 1000px;*/
+    /*margin: auto;*/
+    /*overflow: auto;*/
+    height: 50vh;
+    overflow: scroll;
+}
+
+.event-create-timeline {
+    height: 27vh;
+    overflow: scroll;
+    padding: 0;
+}
+
+.event-info {
+  height: 43.5vh;
+  margin-bottom: 0;
+  font-size: 0.7rem;
+  padding: 0;
+  overflow: scroll;
+}
+
+.event-users {
+  height: 43.5vh;
+  overflow: scroll;
+  margin-bottom: 0;
+  font-size: 0.7rem;
+  padding: 0;
+}
+
+.event-create-tasks {
+  height: 43.5vh;
+  overflow: scroll;
+  margin-bottom: 0;
+  font-size: 0.7rem;
+  padding: 0;
+}
+
+.card-container {
+  padding: 1rem;
+  /*overflow: scroll;*/
+}
+
+.task-creation-btn {
+  text-align: center;
+}
+
+.collection-item {
+  padding: 0.5rem;
+}
+
+.btn-small {
+  height: 24px;
+  line-height: 24px;
+  padding: 0 0.5rem;
+}
+
+.btn-logout {
+  text-transform: none;
+  padding: 0 0.8rem;
+  font-size: 1rem;
+}
+
+.progress-donut-container {
   /*margin: auto;*/
-  /*overflow: auto;*/
+  margin-bottom: 0;
+  padding: 0;
+  transition: 300ms;
+  height: 20vh;
+  overflow: scroll;
 }
 
 .progress-donut-chart {
-  position: relative;
-  top: -1.8em;
-  transition: 300ms;
+    position: relative;
+    top: -1.8em;
+    transition: 300ms;
 }
 
 .pie-chart-name {
   position: relative;
+  margin: 0;
+  margin-top: 1em;
   bottom: -1.6em;
+  text-align: center; 
   z-index: 1;
   transition: 300ms;
 }
 
+.fixed-action-btn {
+    position: fixed !important;
+    bottom: 25px !important;
+    right: 25px !important;
+}
+
 Table {
-  margin: auto;
-  width: 80%;
+    margin: auto;
+    width: 80%;
+}
+
+.li-img {
+  height: 50px ;
+}
+
+.big-icons {
+    font-size: 5em;
+    color: lightcoral;
+    transition: 300ms;
+}
+
+.big-icons:hover {
+    font-size: 7em;
+    color: lightcoral;
+    transition: 300ms;
+}
+
+.cards {
+    transition: 300ms;
+    text-align: center; 
+}
+
+.cards:hover {
+    border: 3px solid lightcoral;
+    width: 600px;
+    transition: 300ms;
+}
+
+MediaBox {
+    position: relative;
+    left: -20em;
+}
+
+.icons {
+    position: relative; 
+    margin-left: 1em; 
+}
+
+.big-icons {
+    position: relative; 
+}
+
+h4 {
+    margin: 1em 0em;
+    text-align: center; 
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
