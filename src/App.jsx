@@ -100,7 +100,7 @@ class App extends Component {
       }
     }, 800)
 
-    this.socket = new WebSocket("ws://localhost:3001");
+    this.socket = new WebSocket("ws://172.46.3.133:3001");
     this.socket.onopen = () => {
       console.log('Connected to server!');
       this.socket.send(JSON.stringify({type: 'request-tasks-and-users'})) 
@@ -210,7 +210,6 @@ class App extends Component {
       const targetUserId = targetTask.userId
       const buttonClicked = clickedStartButton.find((id) => id === targetId);
 
-
       if (buttonClicked !== targetId) {
         // console.error("You must begin a task before you can end it!");
         // Alert.error("You must begin a task before you can end it!");
@@ -248,6 +247,7 @@ class App extends Component {
   }
 
  updateCompletedAndIncompleteTasks = ({ target: { value } }) => {
+   
     const targetId = +value;
     const { progress_bar = [], allTasks = [], clickedStartButton = [] } = this.state;
 
@@ -265,43 +265,32 @@ class App extends Component {
         .find(({ userId }) => userId === targetUserId)
         // .find(({ projectId }) => projectId === targetUserId);
 
-      if (progress_bar.find(({ userId }) => userId === +targetUserId)) {
+      // if (progress_bar.find(({ userId }) => userId === +targetUserId)) {
 
-        const progIdx = progress_bar.indexOf(userProgress);
+      //   const progIdx = progress_bar.indexOf(userProgress);
 
-        const taskStart = allTasks.find(({ userId }) => userId === targetUserId);
+      //   const taskStart = allTasks.find(({ userId }) => userId === targetUserId);
 
-        const percentOfTasksToChange = 100 / userProgress.total_tasks;
+      //   const percentOfTasksToChange = 100 / userProgress.total_tasks;
 
-        const newProgressBar = progress_bar.slice();
-        newProgressBar[progIdx] = {
-          ...userProgress,
-          completed_tasks: Math.min(100, userProgress.completed_tasks + percentOfTasksToChange),
-          incomplete_tasks: Math.max(0, userProgress.incomplete_tasks - percentOfTasksToChange),
+      //   const newProgressBar = progress_bar.slice();
+      //   newProgressBar[progIdx] = {
+      //     ...userProgress,
+      //     completed_tasks: Math.min(100, userProgress.completed_tasks + percentOfTasksToChange),
+      //     incomplete_tasks: Math.max(0, userProgress.incomplete_tasks - percentOfTasksToChange),
         };
-        console.log('my new progress bar', newProgressBar)
+        console.log('activated update progress bar')
+        // console.log('my new progress bar', newProgressBar)
         this.socket.send(JSON.stringify({
           type: 'end-time-for-contractor-tasks-and-updating-progress-bar',
-          progress_bar: newProgressBar,
+          // progress_bar: newProgressBar,
           end_time: new Date(),
-          id: targetId, 
+          id: targetId,
           disabledEndButton: this.state.disabledEndButton
         }));
       }
-    }
-  }
-
-  componentDidUpdate(previousProps, previousState) {
-    if(previousState.eventCreation.timelineData.length !== this.state.eventCreation.timelineData.length){
-      // console.log('detected timeline updated')
-      this.clearTaskFields();
-    }
-    if (previousState.clickedEndButton.length !== this.state.clickedEndButton.length && this.state.updatedProgressBar !== 1 ){
-      let onlyEndDateTasks = this.state.allTasks.filter((task) => task.end_date !== null ).map((task)=> task.id)
-      this.updateProgressBarsonPageLoad(onlyEndDateTasks)
-      this.setState({updatedProgressBar: 1})
-    }
-  }
+    // }
+  // }
 
   render() {
     return (
