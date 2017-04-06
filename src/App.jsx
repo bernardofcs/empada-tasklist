@@ -208,6 +208,7 @@ class App extends Component {
       let progress_bar = newProgressBar
       const targetTask = allTasks.find((task) => task.id === targetId);
       const targetUserId = targetTask.userId
+      const targetProjectId = targetTask.projectId
       const buttonClicked = clickedStartButton.find((id) => id === targetId);
 
       if (buttonClicked !== targetId) {
@@ -217,7 +218,12 @@ class App extends Component {
 
         const userProgress = progress_bar
           .filter((v) => v)
-          .find(({ userId }) => userId === targetUserId)
+          .filter(({ userId }) => {
+            return userId === targetUserId 
+          })
+          .find(({ projectId }) => {
+            return projectId === targetProjectId;
+          })
         // .find(({ projectId }) => projectId === targetUserId);
 
         if (progress_bar.find(({ userId }) => userId === +targetUserId)) {
@@ -253,17 +259,23 @@ class App extends Component {
 
       const targetTask = allTasks.find((task) => task.id === targetId);
       const targetUserId = targetTask.userId
+      const targetProjectId = targetTask.projectId
       const buttonClicked = clickedStartButton.find((id) => id === targetId);
 
       if (buttonClicked !== targetId) {
         console.error("You must begin a task before you can end it!");
         Alert.error("You must begin a task before you can end it!");
       } else {
-
+      // debugger;
       const userProgress = progress_bar
         .filter((v) => v)
-        .find(({ userId }) => userId === targetUserId)
-        // .find(({ projectId }) => projectId === targetUserId);
+        .filter(({ userId }) => {
+          return userId === targetUserId 
+        })
+        .find(({ projectId }) => {
+          return projectId === targetProjectId;
+        })
+        // .find(({ projectId }) => projectId === targetUserId)
 
       // if (progress_bar.find(({ userId }) => userId === +targetUserId)) {
 
@@ -288,9 +300,21 @@ class App extends Component {
           id: targetId,
           disabledEndButton: this.state.disabledEndButton
         }));
-      }
     // }
   // }
+  }
+
+//   componentDidUpdate(previousProps, previousState) {
+//     // if(previousState.eventCreation.timelineData.length !== this.state.eventCreation.timelineData.length){
+//     //   // console.log('detected timeline updated')
+//     //   this.clearTaskFields();
+//     // }
+//     if (previousState.clickedEndButton.length !== this.state.clickedEndButton.length && this.state.updatedProgressBar !== 1 ){
+//       let onlyEndDateTasks = this.state.allTasks.filter((task) => task.end_date !== null ).map((task)=> task.id)
+//       this.updateProgressBarsonPageLoad(onlyEndDateTasks)
+//       this.setState({updatedProgressBar: 1})
+//     }
+//   }
 
   render() {
     return (
