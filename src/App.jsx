@@ -100,7 +100,7 @@ class App extends Component {
       }
     }, 800)
 
-    this.socket = new WebSocket("ws://172.46.3.133:3001");
+    this.socket = new WebSocket("ws://172.46.3.137:3001");
     this.socket.onopen = () => {
       console.log('Connected to server!');
       this.socket.send(JSON.stringify({type: 'request-tasks-and-users'})) 
