@@ -328,11 +328,6 @@ class App extends Component {
                   <li className="li-img"><img src={this.state.profile.picture} className="avatar"/></li>
                 }
                 {this.state.profile &&
-                  <li>
-                    <a>Logged in as: {this.state.profile.email}</a>
-                  </li>
-                }
-                {this.state.profile &&
                   <li><a className="btn-logout waves-effect waves-light btn btn-small green lighten-2" onClick={this.logout}>Log out</a></li>
                 }
                 {!(this.state.profile) &&
