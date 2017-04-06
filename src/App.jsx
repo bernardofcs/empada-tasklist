@@ -318,27 +318,41 @@ class App extends Component {
 
   render() {
     return (
+      
       <div>
         <nav className="nav-extended light-blue lighten-1">
           <div className="nav-wrapper">
             <a href="#!" className="brand-logo left"><i className="large material-icons">av_timer</i>EMPADA</a>
+              <ul id="nav-mobile" className="right">
+                {this.state.profile &&
+                  <li className="li-img"><img src={this.state.profile.picture} className="avatar"/></li>
+                }
+                {this.state.profile &&
+                  <li>
+                    <a>Logged in as: {this.state.profile.email}</a>
+                  </li>
+                }
+                {this.state.profile &&
+                  <li><a className="btn-logout waves-effect waves-light btn btn-small green lighten-2" onClick={this.logout}>Log out</a></li>
+                }
+                {!(this.state.profile) &&
+                  <li>
+                    <a className="waves-effect waves-light btn green lighten-2" onClick={this.showLock}>Sign In</a>
+                  </li>
+                }
+            </ul>
           </div>
-          {/*<div className="App">
-            <div className="App-header">
-              <h2>Welcome to EMPADA</h2>
-            </div>
-          </div>*/}
         </nav>
-          {this.state.profile &&
-          <TaskDashboard
-              userEmail={this.state.profile.email}
-              handleStartTask={this.handleStartTask}
-              listOfTasks={this.state.allTasks}
-              updateCompletedAndIncompleteTasks={this.updateCompletedAndIncompleteTasks}
-              clickedStart={this.state.clickedStartButton}
-              clickedEnd={this.state.clickedEndButton}
-            />
-          }
+        {this.state.profile &&
+        <TaskDashboard
+            userEmail={this.state.profile.email}
+            handleStartTask={this.handleStartTask}
+            listOfTasks={this.state.allTasks}
+            updateCompletedAndIncompleteTasks={this.updateCompletedAndIncompleteTasks}
+            clickedStart={this.state.clickedStartButton}
+            clickedEnd={this.state.clickedEndButton}
+          />
+        }
       </div>
     );
   }
