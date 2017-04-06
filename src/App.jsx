@@ -14,7 +14,7 @@ class App extends Component {
       clickedStartButton : [],
       clickedEndButton : [],
       progress_bar: []
-   }
+    }
   }
   
   componentWillMount = () => {
@@ -56,6 +56,7 @@ class App extends Component {
         this.handleLogin()
       });
     });
+    setTimeout(()=> {},3000)
   }
 
   showLock = () => {
@@ -70,7 +71,13 @@ class App extends Component {
   }
 
   handleLogin = () => {
-    const loginObj = {type: 'auth0-login', email:this.state.profile.email, first_name: this.state.profile.given_name, last_name: this.state.profile.family_name}
+    const loginObj = {
+      type: 'auth0-login', 
+      email:this.state.profile.email, 
+      first_name: this.state.profile.given_name, 
+      last_name: this.state.profile.family_name,
+      picture: this.state.profile.picture,
+    } 
     this.socket.send(JSON.stringify(loginObj))
   }
 
@@ -99,7 +106,7 @@ class App extends Component {
         this.setState({profile: storageProfile})
       }
     }, 800)
-
+    // this.socket = new WebSocket("ws://172.46.3.38:3001");
     this.socket = new WebSocket("ws://localhost:3001");
     this.socket.onopen = () => {
       console.log('Connected to server!');
@@ -197,6 +204,53 @@ class App extends Component {
     }
     console.log('start task button pressed');
     this.socket.send(JSON.stringify(message));
+  }
+  updateProgressBarsonPageLoad = (taskIds) => {
+    const newProgressBar = this.state.progress_bar.slice();
+    let { progress_bar = [], allTasks = [], clickedStartButton = [] } = this.state;
+    taskIds.forEach((taskId)=>{
+      const targetId = +taskId;
+      // retaining the previous update in progress_bar, which references newProgressBar, so that the state is retained for the next time around, thus survives the page refresh 
+      progress_bar = newProgressBar
+      const targetTask = allTasks.find((task) => task.id === targetId);
+      const targetUserId = targetTask.userId
+      const buttonClicked = clickedStartButton.find((id) => id === targetId);
+
+
+      if (buttonClicked !== targetId) {
+        // console.error("You must begin a task before you can end it!");
+        // Alert.error("You must begin a task before you can end it!");
+      } else {
+
+        const userProgress = progress_bar
+          .filter((v) => v)
+          .find(({ userId }) => userId === targetUserId)
+        // .find(({ projectId }) => projectId === targetUserId);
+
+        if (progress_bar.find(({ userId }) => userId === +targetUserId)) {
+
+          const progIdx = progress_bar.indexOf(userProgress);
+
+          // const taskStart = allTasks.find(({ userId }) => userId === targetUserId);
+
+          const percentOfTasksToChange = 100 / userProgress.total_tasks;
+
+          newProgressBar[progIdx] = {
+            ...userProgress,
+            completed_tasks: Math.min(100, userProgress.completed_tasks + percentOfTasksToChange),
+            incomplete_tasks: Math.max(0, userProgress.incomplete_tasks - percentOfTasksToChange),
+          };
+        }
+      }
+    })
+    // console.log(newProgressBar)
+    this.socket.send(JSON.stringify({
+      type: 'new-pb-state',
+      progress_bar: newProgressBar
+    }));
+    // console.log('wills progress bar', newProgressBar);
+    // this.setState({progress_bar: newProgressBar})
+    // this.setState(Object.assign({},this.state,{progress_bar: newProgressBar}));
   }
 
  updateCompletedAndIncompleteTasks = ({ target: { value } }) => {
